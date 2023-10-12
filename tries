@@ -1,0 +1,101 @@
+#include <iostream>
+using namespace std;
+class trienode{
+public:
+char data;
+trienode * childnode[26];
+bool isterminalnode;
+
+trienode(char ch){
+  data = ch;
+  for(int i =0 ; i<26 ; i++){
+    childnode[i] = NULL;
+  }
+  isterminalnode = false;
+}
+};
+class trie{
+public:
+trienode* root;
+trie(){
+  root =   new trienode('\0');       
+  }
+void insertutil(trienode* root , string word){
+  //base case
+  if(word.length()==0){
+    root->isterminalnode = true;
+    return;
+  }
+  int index = word[0]-'A';
+  trienode* child;
+  if(root->childnode[index] != NULL){
+    child = root->childnode[index];
+    }
+    else{
+      child = new trienode(word[0]);
+      root->childnode[index] = child;
+    }
+  //recursion
+  insertutil(child  , word.substr(1));
+  }
+    
+ 
+void insertword(string word){
+  insertutil(root , word);
+}
+bool search( trienode* root , string word){
+  if(word.length()==0){
+    return  root->isterminalnode;
+  }
+  int index = word[0]-'A';
+  trienode* child;
+  if(root->childnode[index] != NULL){
+    child = root->childnode[index];
+    }
+    else{
+      return false;
+      }
+  return search(child  , word.substr(1));
+  }
+  bool searchit(string word){
+    return search(root , word);
+  }
+  void remove(trienode* root ,string word){
+       if(word.length() == 0){
+            root->isterminalnode = false;
+            return ;
+        }
+
+        int index = word[0] - 'A';
+        trienode* child;
+
+        //present
+        if(root->childnode[index] != NULL){
+            child = root->childnode[index];
+        }
+        else{
+            //absent
+            child = new trienode(word[0]);
+            root->childnode[index] = child;
+        }
+
+        // recursion
+        return remove(child, word.substr(1));
+    }
+
+    void removeword(string word){
+        remove(root, word);
+        return ;
+    }
+  
+  };
+
+int main() {
+trie *t = new trie() ;
+  t->insertword("ABCD");
+  cout<<"present or not"<<t->searchit("ABCD")<<endl;
+  t->removeword("ABCD");
+      cout<<"present or not"<<t->searchit("ABCD")<<endl;
+  
+}
+//space utilization better than hashmap
